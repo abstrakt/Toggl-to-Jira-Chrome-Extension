@@ -94,6 +94,7 @@ $(document).ready(function () {
         mergeEntriesBy: 'no-merge',
         jumpToToday: false,
         roundMinutes: 0,
+        commentsAfterJiraId: false,
     }, function (items) {
         config = items;
         console.log('Fetching toggl entries for today.', 'Jira url: ', config.url, config);
@@ -197,7 +198,9 @@ function fetchEntries() {
 
         entries.forEach(function (entry) {
             entry.description = entry.description || 'no-description';
-            var issue = entry.description.split(' ')[0];
+            var splitDescription = entry.description.split(' ');
+            var issue = splitDescription.shift();
+            var workLogDescription = splitDescription.join(' ');
             var togglTime = roundUp(entry.duration, config.roundMinutes);
 
             var dateString = toJiraWhateverDateTime(entry.start);
@@ -211,6 +214,11 @@ function fetchEntries() {
                 }
             });
 
+            var comment = config.comment;
+            if (config.commentsAfterJiraId) {
+                comment = workLogDescription;
+            }
+
             // merge toggl entries by ticket ?
             if (log && config.mergeEntriesBy !== 'no-merge') {
                 log.timeSpentInt = log.timeSpentInt + togglTime;
@@ -223,7 +231,7 @@ function fetchEntries() {
                     submit: (togglTime > 0),
                     timeSpentInt: togglTime,
                     timeSpent: togglTime > 0 ? togglTime.toString().toHHMM() : 'still running...',
-                    comment: config.comment,
+                    comment: comment,
                     started: dateString,
                     dateKey: dateKey,
                 };
