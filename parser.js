@@ -95,6 +95,7 @@ $(document).ready(function () {
         jumpToToday: false,
         roundMinutes: 0,
         commentsAfterJiraId: false,
+        removeBrackets: false,
     }, function (items) {
         config = items;
         console.log('Fetching toggl entries for today.', 'Jira url: ', config.url, config);
@@ -192,7 +193,7 @@ function fetchEntries() {
 
     var dateQuery = '?start_date=' + startDate + '&end_date=' + endDate;
 
-    $.get('https://www.toggl.com/api/v8/time_entries' + dateQuery, function (entries) {
+    $.get('https://toggl.com/api/v8/time_entries' + dateQuery, function (entries) {
         logs = [];
         entries.reverse();
 
@@ -205,6 +206,10 @@ function fetchEntries() {
 
             var dateString = toJiraWhateverDateTime(entry.start);
             var dateKey = createDateKey(entry.start);
+
+            if (config.removeBrackets) {
+                issue = issue.replace('[', '').replace(']', '');
+            }
 
             var log = _.find(logs, function (log) {
                 if (config.mergeEntriesBy === 'issue-and-date') {

@@ -7,6 +7,8 @@ function saveOptions() {
     var jumpToToday = document.getElementById('jump-to-today').checked;
     var roundMinutes = document.getElementById('round_minutes').value;
     var commentsAfterJiraId = document.getElementById('comments-after-jira-id').checked;
+    var removeBrackets = document.getElementById('remove-brackets').checked;
+
     chrome.storage.sync.set({
         url: url,
         comment: comment,
@@ -14,7 +16,8 @@ function saveOptions() {
         jumpToToday: jumpToToday,
         togglApiToken: togglApiToken,
         roundMinutes: roundMinutes,
-        commentsAfterJiraId: commentsAfterJiraId
+        commentsAfterJiraId: commentsAfterJiraId,
+        removeBrackets: removeBrackets
     }, function () {
         // Update status to let user know options were saved.
         var status = document.getElementById('status');
@@ -37,6 +40,7 @@ function restoreOptions() {
         togglApiToken: '',
         roundMinutes: 0,
         commentsAfterJiraId: false,
+        removeBrackets: false,
     }, function (items) {
         document.getElementById('jira-url').value = items.url;
         document.getElementById('log-comment').value = items.comment;
@@ -45,6 +49,7 @@ function restoreOptions() {
         document.getElementById('jump-to-today').checked = items.jumpToToday;
         document.getElementById('round_minutes').value = items.roundMinutes;
         document.getElementById('comments-after-jira-id').checked = items.commentsAfterJiraId;
+        document.getElementById('remove-brackets').checked = items.removeBrackets;
     });
 }
 
